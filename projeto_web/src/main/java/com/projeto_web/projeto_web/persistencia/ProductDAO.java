@@ -14,11 +14,12 @@ import com.projeto_web.projeto_web.model.Product;
 
 public class ProductDAO {
 
-    private static String selectProducs = "select * from Products";
-    private static String selectProducId = "select * from Products where id=?";
-    private static String insertProduct = "insert into Products (id,preco,nome,descricao,estoque) values(?,?,?,?,?)";
-    private static String deleteProduct = "delete from Products where email = ?";
-
+    private static String selectProducs = "select * from products";
+    private static String selectProducId = "select * from products where id = ?";
+    private static String insertProduct = "insert into products (id,preco,nome,descricao,estoque) values(?,?,?,?,?)";
+    private static String deleteProduct = "delete from products where email = ?";
+    private static String updateProduct = "update product set estoque = estoque + ? where id ?";
+  
     public static Product getProductId(int id){
         Product product = null;
         try{
@@ -51,6 +52,19 @@ public class ProductDAO {
         }
         return products;
     }
+
+    public static void updateEstoque(int value, int id ){
+        try{
+            Connection connection = Conexao.getConnection();
+            PreparedStatement stm = connection.prepareStatement(updateProduct);
+            stm.setInt(1, value);
+            stm.setInt(2, id);
+            stm.executeUpdate();
+            connection.close();
+        } catch(SQLException | URISyntaxException e){
+            System.out.println(e);
+        }
+    }
     
     public static void insertProduct(Product product){
         try{
@@ -59,8 +73,8 @@ public class ProductDAO {
             stm.setInt(1, product.getId());
             stm.setInt(2, product.getPreco());
             stm.setString(3, product.getNome());
-            stm.setString(1, product.getDescricao());
-            stm.setInt(2, product.getEstoque());
+            stm.setString(4, product.getDescricao());
+            stm.setInt(5, product.getEstoque());
             stm.executeUpdate();
             connection.close();
         } catch(SQLException | URISyntaxException e){

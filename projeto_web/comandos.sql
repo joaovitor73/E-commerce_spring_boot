@@ -12,6 +12,14 @@ CREATE TABLE logistics(
 	senha text not null
 );
 
+CREATE TABLE products(
+	id int primary key,
+	preco int not null,
+	nome text  not null,
+	descricao text not null,
+	estoque int not null
+);
+
 
 insert into clients (nome, email, senha) values 
 ('João Pedro',' jp2017@uol.com.br', '12345jaum'),

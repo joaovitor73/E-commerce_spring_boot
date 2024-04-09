@@ -29,7 +29,7 @@ public class ProductController {
 
     @RequestMapping(value = "/logistc/products/delete", method = RequestMethod.DELETE)
     public void doDeleteProduct(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
-            Integer id =  Integer.parseInt(request.getParameter("email"));
+            Integer id =  Integer.parseInt(request.getParameter("id"));
             var write = response.getWriter();
             if(ProductDAO.getProductId(id) != null){
                 ProductDAO.deleteProduct(id);
