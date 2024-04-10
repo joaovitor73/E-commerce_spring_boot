@@ -7,33 +7,48 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import com.projeto_web.projeto_web.model.Client;
 import com.projeto_web.projeto_web.persistencia.ClientDAO;
+import com.projeto_web.projeto_web.persistencia.LogisticDAO;
+
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 @Controller
-public class ClientController {
+public class UserController {
     
-    @RequestMapping(value = "/cliets/validate", method = RequestMethod.POST)
-    public void doValidateClient(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+    @RequestMapping(value = "/user/validate", method = RequestMethod.POST)
+    public void doValidate(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String email = request.getParameter("email");
-        String senha = request.getParameter("senha");
+        String password = request.getParameter("password");
         ClientDAO uDAO = new ClientDAO();
+        LogisticDAO lDAO = new LogisticDAO();
         var write = response.getWriter();
-        if(uDAO.getClient(email, senha) != null){//user exist
-            write.println("Acesso permitido");
+        if(uDAO.getClient(email, password) != null){//user exist
+            write.println("Acesso permitido, bem-vindo! Cliente");
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (email.replace('@','|').equals(cookie.getName())) {
+                        
+                    }
+                }
+            }else{//Criar cookie
+
+            }
+    s
+        }else if(lDAO.getLogistic(email, password) != null){//logistic exist
+            write.println("Acesso permitido, bem-vindo! Lojista");
         }else{
-            write.println("Acesso negado");
-            write.println(senha);
-            write.println(email);
+            write.println("Login invalido");
         }
     }
 
-    @RequestMapping(value = "/cliets/create", method = RequestMethod.POST)
+    @RequestMapping(value = "/user/create", method = RequestMethod.POST)
     public void doCreateClient(HttpServletResponse response, HttpServletRequest request) throws IOException, ServletException{
-        String nome = request.getParameter("nome");
+        String nome = request.getParameter("name");
         String email = request.getParameter("email");
-        String senha = request.getParameter("senha");
+        String senha = request.getParameter("password");
         ClientDAO uDAO = new ClientDAO();
         var write = response.getWriter();
         if(uDAO.getClientEmail(email) == null){
@@ -43,10 +58,9 @@ public class ClientController {
         }else{
             write.println("Usuario existente");
         }
-      //  response.sendRedirect("index.html");
     }
 
-    @RequestMapping(value = "/cliets/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/user/delete", method = RequestMethod.DELETE)
     public void doDeleteClient(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
             String email = request.getParameter("email");
             ClientDAO uDAO =  new ClientDAO();

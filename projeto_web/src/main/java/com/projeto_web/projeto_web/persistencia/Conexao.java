@@ -12,7 +12,7 @@ public class Conexao {
         String port ="5432";
         String name = "projeto";
         String username = "postgres";
-        String password ="1234";
+        String password ="123";
         String dbUrl = "jdbc:postgresql://" + db+ ':' + port + "/" + name + "?serverTimezone=UTC";
         return DriverManager.getConnection(dbUrl, username, password);
     }
