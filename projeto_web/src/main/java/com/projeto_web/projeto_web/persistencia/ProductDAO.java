@@ -17,7 +17,7 @@ public class ProductDAO {
     private static String selectProducts = "select * from products";
     private static String selectProducId = "select * from products where id = ?";
     private static String insertProduct = "insert into products (id,preco,nome,descricao,estoque) values(?,?,?,?,?)";
-    private static String deleteProduct = "delete from products where email = ?";
+    private static String deleteProduct = "delete from products where id = ?";
     private static String updateProduct = "update products set estoque = estoque + ? where id = ?";
   
     public static Product getProductId(int id){

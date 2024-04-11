@@ -2,7 +2,6 @@ package com.projeto_web.projeto_web.controller;
 
 import java.io.IOException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -42,19 +41,24 @@ public class CarrinhoController {
                 if (email.replace('@','|').equals(cookie.getName())) {
                     write.println(cookie.getValue());
                     flag = true;
-                    Cookie c = new Cookie(email.replace('@','|'), cookie.getValue()+"|"+nome+"|"+preco);
+                    String data;
+                    if(cookie.getValue().equals("")){
+                        data = nome+"|"+preco;
+                    }else{
+                        data =  cookie.getValue()+"|"+nome+"|"+preco;
+                    }
+                   
+                    Cookie c = new Cookie(email.replace('@','|'), data);
                     c.setMaxAge(3600-cookie.getMaxAge());
                     response.addCookie(c);
                 }
             }
             if(!flag){
-                Cookie c = new Cookie(email.replace('@','|'), nome+"|"+preco );
+                Cookie c = new Cookie(email.replace('@','|'),"");
                 c.setMaxAge(3600);
                 response.addCookie(c);
                 response.sendRedirect("/carrinho/update?id=" + id + "&comando=add");
             }
-    
-            
             
         }else if (command.equals("remove")){
         //remover do carrinho
@@ -63,21 +67,3 @@ public class CarrinhoController {
         
     }
 }
-// Cookie[] cookies = request.getCookies();
-// boolean flag = true;
-// if (cookies == null) {//Criar cookie
-//     Cookie cookie = new Cookie(email.replace('@','|'), "");
-//     cookie.setMaxAge(3600);
-//     response.addCookie(cookie);
-// }else{
-//      for (Cookie cookie : cookies) {//Verifica se cookie existe
-//         if (email.replace('@','|').equals(cookie.getName())) {
-//             flag = false;
-//         }
-//     }
-//     if(flag){//criar cookie
-//         Cookie cookie = new Cookie(email.replace('@','|'), "");
-//         cookie.setMaxAge(3600);
-//         response.addCookie(cookie);
-//     }
-// }

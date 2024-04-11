@@ -28,7 +28,12 @@ public class HomeController {
                 List<Product> products = ProductDAO.getProducts();
                 for(Product p : products){
                     write.println("<tr><td> " + p.getNome() + "</td><td> " + p.getDescricao() + "</td><td> " + p.getEstoque() + "</td><td>");
-                    write.println("<a href='/carrinho/update?id=" + p.getId() + "&comando=add'" + ">Adicionar</a>");
+                    if(p.getEstoque() > 0){
+                        write.println("<a href='/carrinho/update?id=" + p.getId() + "&comando=add'" + ">Adicionar</a>");
+                    }else{
+                           write.println("<p> Sem estoque </p>");
+                    }
+                 
                     write.println("</td></tr>");
                 }
                 write.println("</table>");

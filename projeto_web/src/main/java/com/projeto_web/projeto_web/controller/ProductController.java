@@ -27,9 +27,10 @@ public class ProductController {
         Integer estoque = Integer.parseInt(request.getParameter("estoque"));
         Product product = new Product(id,preco,nome,descricao,estoque);
         ProductDAO.insertProduct(product);
+        response.sendRedirect("/");
     }
 
-    @RequestMapping(value = "/logistc/products/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/logistc/products/delete", method = RequestMethod.GET)
     public void doDeleteProduct(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
             Integer id =  Integer.parseInt(request.getParameter("id"));
             if(ProductDAO.getProductId(id) != null){
