@@ -13,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
@@ -25,20 +26,15 @@ public class UserController {
         LogisticDAO lDAO = new LogisticDAO();
         var write = response.getWriter();
         if(uDAO.getClient(email, password) != null){//user exist
-            write.println("Acesso permitido, bem-vindo! Cliente");
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if (email.replace('@','|').equals(cookie.getName())) {
-                        
-                    }
-                }
-            }else{//Criar cookie
-
-            }
-    s
+            HttpSession session = request.getSession();
+            session.setAttribute("email", email);
+            session.setAttribute("rule", "cliente");
+            response.sendRedirect("/");
         }else if(lDAO.getLogistic(email, password) != null){//logistic exist
-            write.println("Acesso permitido, bem-vindo! Lojista");
+            HttpSession session = request.getSession();
+            session.setAttribute("email", email);
+            session.setAttribute("rule", "lojista");
+            response.sendRedirect("/");
         }else{
             write.println("Login invalido");
         }

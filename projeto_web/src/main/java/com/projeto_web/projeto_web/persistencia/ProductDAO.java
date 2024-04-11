@@ -14,11 +14,11 @@ import com.projeto_web.projeto_web.model.Product;
 
 public class ProductDAO {
 
-    private static String selectProducs = "select * from products";
+    private static String selectProducts = "select * from products";
     private static String selectProducId = "select * from products where id = ?";
     private static String insertProduct = "insert into products (id,preco,nome,descricao,estoque) values(?,?,?,?,?)";
     private static String deleteProduct = "delete from products where email = ?";
-    private static String updateProduct = "update product set estoque = estoque + ? where id ?";
+    private static String updateProduct = "update products set estoque = estoque + ? where id = ?";
   
     public static Product getProductId(int id){
         Product product = null;
@@ -28,7 +28,7 @@ public class ProductDAO {
             stm.setInt(1, id);
             ResultSet rs = stm.executeQuery();
             if(rs.next())
-                product = new Product(rs.getInt("id"),rs.getInt("preco"), rs.getString("nome"), rs.getString("descricao"), rs.getInt("quantidade"));
+                product = new Product(rs.getInt("id"),rs.getInt("preco"), rs.getString("nome"), rs.getString("descricao"), rs.getInt("estoque"));
             connection.close();
         }catch(SQLException | URISyntaxException e){
             System.out.println(e);
@@ -41,10 +41,10 @@ public class ProductDAO {
         List<Product> products = new ArrayList<Product>();
         try{
             Connection connection = Conexao.getConnection();
-            PreparedStatement stm = connection.prepareStatement(selectProducs);
+            PreparedStatement stm = connection.prepareStatement(selectProducts);
             ResultSet rs = stm.executeQuery();
             while(rs.next()){
-                product = new Product(rs.getInt("id"),rs.getInt("preco"), rs.getString("nome"), rs.getString("descricao"), rs.getInt("quantidade"));
+                product = new Product(rs.getInt("id"),rs.getInt("preco"), rs.getString("nome"), rs.getString("descricao"), rs.getInt("estoque"));
                 products.add(product);
             }        
         }catch(SQLException | URISyntaxException e){

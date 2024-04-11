@@ -28,4 +28,10 @@ insert into clients (nome, email, senha) values
 
 insert into logistics (nome, email, senha) values 
 ('Taniro Rodrigues','jtanirocr@gmail.com', '123456abc'),
+('Admin','admin@admin.com', '123'),
 ('Lorena  Silva', 'lore_sil@yahoo.com.br'  ,'12uhuuu@');
+
+insert into products (id, preco, nome, descricao, estoque) values 
+('Mesa Uma mesa de computador.', 'R$ 500,00', ' 10'),
+('Lápis Lápis B2 grafite .', ' R$ 2,00', ' 50'),
+('Computador Computador I5 16Gb de RAM.', ' R$ 1.500,00', ' 2');

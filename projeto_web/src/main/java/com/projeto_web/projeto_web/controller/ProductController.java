@@ -1,6 +1,8 @@
 package com.projeto_web.projeto_web.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,15 +29,12 @@ public class ProductController {
         ProductDAO.insertProduct(product);
     }
 
-    @RequestMapping(value = "/logistc/products/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/logistc/products/delete", method = RequestMethod.POST)
     public void doDeleteProduct(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
             Integer id =  Integer.parseInt(request.getParameter("id"));
-            var write = response.getWriter();
             if(ProductDAO.getProductId(id) != null){
                 ProductDAO.deleteProduct(id);
-                write.println("Produto deletado");
-            }else{
-                write.println("Produto não encontrado");
+                response.sendRedirect("/");
             }
     }
 }
