@@ -1,6 +1,12 @@
 package com.projeto_web.projeto_web.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import com.projeto_web.projeto_web.persistencia.ProductDAO;
 
 public class Carrinho {
 
@@ -9,6 +15,11 @@ public class Carrinho {
     public Carrinho(ArrayList<Product> produtos) {
         super();
         this.produtos = produtos;
+    }
+
+    public Carrinho() {
+        super();
+        this.produtos = new ArrayList<Product>();
     }
     public ArrayList<Product> getProdutos() {
         return produtos;
@@ -26,6 +37,21 @@ public class Carrinho {
             }
         }
         return mp;
+    }
+
+    public Map<Integer, Integer> cookieToArray(String produtos){ //cookie
+        String[] produtosString = produtos.split("\\|");
+        Set<String> conjuntoProduto = new HashSet<>();
+        Map<Integer, Integer> mapProduto = new HashMap<>();
+        for (int i = 0; i < produtosString.length; i++) {
+            if(conjuntoProduto.contains(produtosString[i])){
+                mapProduto.put(Integer.parseInt(produtosString[i]), mapProduto.get(Integer.parseInt(produtosString[i]))+1);
+            }else{
+                mapProduto.put(Integer.parseInt(produtosString[i]), 1);
+                conjuntoProduto.add(produtosString[i]);
+            }
+        }
+        return mapProduto;
     }
 
     public void removeProduto (int id){

@@ -24,10 +24,10 @@ public class HomeController {
             write.println("<html> <head> <title> Loja </title> </head> <body>");
             if(session.getAttribute("rule").equals("cliente")){
                 write.println("<h1>Lista Produtos</h1>");
-                write.println("<table border='1'><thead><tr><th>Nome</th> <th>Descrição</th> <th>Quantidade</th> <th>Adicionar</th></tr></thead>");
+                write.println("<table border='1'><thead><tr><th>Nome</th> <th>Descrição</th> <th>Quantidade</th><th>Preço</th> <th>Adicionar</th></tr></thead>");
                 List<Product> products = ProductDAO.getProducts();
                 for(Product p : products){
-                    write.println("<tr><td> " + p.getNome() + "</td><td> " + p.getDescricao() + "</td><td> " + p.getEstoque() + "</td><td>");
+                    write.println("<tr><td> " + p.getNome() + "</td><td> " + p.getDescricao() + "</td><td> " + p.getEstoque() + "</td><td>" + + p.getPreco() + "</td><td>");
                     if(p.getEstoque() > 0){
                         write.println("<a href='/carrinho/update?id=" + p.getId() + "&comando=add'" + ">Adicionar</a>");
                     }else{
@@ -45,9 +45,9 @@ public class HomeController {
                 if(products.size() == 0){
                     write.println("<h2>Não há produtos cadastrados</h2>");
                 }else{
-                    write.println("<table border='1'><thead><tr><th>Nome</th> <th>Descrição</th> <th>Quantidade</th> <th>Adicionar</th></tr></thead>");
+                    write.println("<table border='1'><thead><tr><th>Nome</th> <th>Descrição</th> <th>Quantidade</th><th>Preço</th> <th>Remover</th></tr></thead>");
                     for(Product p : products){
-                        write.println("<tr><td> " + p.getNome() + "</td><td> " + p.getDescricao() + "</td><td> " + p.getEstoque() + "</td><td>");
+                        write.println("<tr><td> " + p.getNome() + "</td><td> " + p.getDescricao() + "</td><td> " + p.getEstoque() + "</td><td>" + p.getPreco() + "</td><td>");
                         write.println("<a href='/logistc/products/delete?id=" + p.getId() +"'>Excluir</a>");
                         write.println("</td></tr>");
                     }
