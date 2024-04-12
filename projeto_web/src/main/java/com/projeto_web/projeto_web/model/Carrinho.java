@@ -11,6 +11,7 @@ import com.projeto_web.projeto_web.persistencia.ProductDAO;
 public class Carrinho {
 
     ArrayList<Product> produtos;
+    private String cookie = "";
 
     public Carrinho(ArrayList<Product> produtos) {
         super();
@@ -43,16 +44,38 @@ public class Carrinho {
         String[] produtosString = produtos.split("\\|");
         Set<String> conjuntoProduto = new HashSet<>();
         Map<Integer, Integer> mapProduto = new HashMap<>();
+        ProductDAO productDAO = new ProductDAO();
+        int id;
         for (int i = 0; i < produtosString.length; i++) {
-            if(conjuntoProduto.contains(produtosString[i])){
-                mapProduto.put(Integer.parseInt(produtosString[i]), mapProduto.get(Integer.parseInt(produtosString[i]))+1);
-            }else{
-                mapProduto.put(Integer.parseInt(produtosString[i]), 1);
-                conjuntoProduto.add(produtosString[i]);
+            id = Integer.parseInt(produtosString[i]);
+            if(productDAO.getProductId(id)  != null){
+                if(i != 0)
+                    this.setCookie("|" + produtosString[i]);
+                else
+                    this.setCookie(produtosString[i]);
+                if(conjuntoProduto.contains(produtosString[i])){
+                    mapProduto.put(id, mapProduto.get(id)+1);
+                }else{
+                    mapProduto.put(id, 1);
+                    conjuntoProduto.add(produtosString[i]);
+                }
             }
         }
         return mapProduto;
     }
+
+    public void setCookie(String dados){
+        cookie+=dados;
+    }
+
+    public String getCookies(){
+        return cookie;
+    }
+
+    public String cookieRemove(String produtos, int id){
+        return produtos.replaceFirst(String.valueOf(id), "");
+    }
+
 
     public void removeProduto (int id){
         Product p = getProduto(id);
