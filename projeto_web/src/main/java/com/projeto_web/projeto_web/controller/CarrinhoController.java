@@ -124,10 +124,10 @@ public class CarrinhoController {
             for (Cookie cookie : cookies) {//Verifica se cookie existe
                 if (email.replace('@','|').equals(cookie.getName())) {
                     Carrinho carrinho = new Carrinho();
-                    carrinho.cookieRemove(cookie.getValue(), id);
-                    cookString = carrinho.getCookies();
+                    cookString = carrinho.cookieRemove(cookie.getValue(), id);
                     cookie.setValue(cookString);
-                    response.sendRedirect("/carrinho?cookString="+cookString+"o valor");
+                    response.addCookie(cookie);
+                    response.sendRedirect("/carrinho");
                 }
             }
             ProductDAO.updateEstoque(1, id);

@@ -72,7 +72,17 @@ public class Carrinho {
     }
 
     public String cookieRemove(String produtos, int id){
-        return produtos.replaceFirst(String.valueOf(id), "");
+        String idStr = String.valueOf(id);
+        String idPreceding = "-" + idStr;
+        String produtosAtualizado;
+        // Se o ID está precedido por "|", o remove
+        if (produtos.contains(idPreceding)) {
+            produtosAtualizado = produtos.replaceFirst(idPreceding, "");
+        } else {
+            // Se não, remove o ID normalmente
+            produtosAtualizado = produtos.replaceFirst(idStr, "");
+        }
+        return produtosAtualizado;
     }
 
 

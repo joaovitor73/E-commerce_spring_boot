@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.projeto_web.projeto_web.model.Carrinho;
 import com.projeto_web.projeto_web.model.Product;
 import com.projeto_web.projeto_web.persistencia.ProductDAO;
 
@@ -31,27 +32,27 @@ public class ProductController {
 
     @RequestMapping(value = "/logistc/products/delete", method = RequestMethod.GET)
     public void doDeleteProduct(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
-        Integer id = Integer.parseInt(request.getParameter("id"));
+        String id = request.getParameter("id");
         Cookie[] cookies = request.getCookies(); 
         for (Cookie cookie : cookies) {
-            if(cookie.getName().equals("id")) {
-                String[] ids = cookie.getValue().split("-");
-                StringBuilder novoValor = new StringBuilder();
-                for (String i : ids) {
-                    if (!i.equals(id.toString())) {
-                        if (novoValor.length() > 0) {
-                            novoValor.append("-");
-                        }
-                        novoValor.append(i);
-                    }
+            String[] ids = cookie.getValue().split("-");
+            String cookString;
+            for (String i : ids) {
+                if (i.equals(id)) {
+                    //aqui ainda está com bugs, por causa que não está removendo o produto do carrinho do cliente
+                    Carrinho carrinho = new Carrinho();
+                    cookString = carrinho.cookieRemove(cookie.getValue(), Integer.parseInt(i));
+                    cookie.setValue(cookString);
+                    Cookie newCookie = new Cookie(cookie.getName(), cookie.getValue());
+                    response.addCookie(cookie);
+                    response.addCookie(newCookie);
+                    response.sendRedirect("/logistc/products/delete");
                 }
-                cookie.setValue(novoValor.toString());
-                response.addCookie(cookie);
             }
         }        
-            if(ProductDAO.getProductId(id) != null){
-                ProductDAO.deleteProduct(id);
-                response.sendRedirect("/");
-            }
+        if(ProductDAO.getProductId(Integer.parseInt(id)) != null){
+            ProductDAO.deleteProduct(Integer.parseInt(id));
+            response.sendRedirect("/");
+        }
     }
 }
