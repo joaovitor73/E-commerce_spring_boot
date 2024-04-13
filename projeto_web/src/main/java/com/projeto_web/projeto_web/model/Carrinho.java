@@ -41,16 +41,15 @@ public class Carrinho {
     }
 
     public Map<Integer, Integer> cookieToArray(String produtos){ //cookie
-        String[] produtosString = produtos.split("\\|");
+        String[] produtosString = produtos.split("\\-");
         Set<String> conjuntoProduto = new HashSet<>();
         Map<Integer, Integer> mapProduto = new HashMap<>();
-        ProductDAO productDAO = new ProductDAO();
         int id;
         for (int i = 0; i < produtosString.length; i++) {
             id = Integer.parseInt(produtosString[i]);
-            if(productDAO.getProductId(id)  != null){
+            if(ProductDAO.getProductId(id)  != null){
                 if(i != 0)
-                    this.setCookie("|" + produtosString[i]);
+                    this.setCookie("-" + produtosString[i]);
                 else
                     this.setCookie(produtosString[i]);
                 if(conjuntoProduto.contains(produtosString[i])){

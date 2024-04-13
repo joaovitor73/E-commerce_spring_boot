@@ -16,6 +16,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @Controller
 public class CarrinhoController {
@@ -31,19 +33,14 @@ public class CarrinhoController {
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
             if (email.replace('@','|').equals(cookie.getName())) {
-                Carrinho carrinho = new Carrinho();
                 flag = true;
+                Carrinho carrinho = new Carrinho();
                 for (Entry<Integer, Integer> entry : carrinho.cookieToArray(cookie.getValue()).entrySet()) {
                     Integer id = entry.getKey();
                     int quantidade = entry.getValue();
                     Product product = ProductDAO.getProductId(id);
                     write.println("<tr><td> " + product.getNome() + "</td><td> " + product.getDescricao()+  "</td><td> " + quantidade +  "</td><td> " + product.getPreco()+ "</td><td> "+ "<a href='/carrinho/update?id=" +id + "&comando=remove'" + ">Remover</a>" + "</td>");
                 }
-                
-              //Cookie c = new Cookie(email.replace('@','|'), carrinho.getCookies());
-              // c.setMaxAge(3600-cookie.getMaxAge());
-                //response.addCookie(c);
-                //response.sendRedirect("/carrinho");
             }
         }
         write.println("</table>");
@@ -71,6 +68,16 @@ public class CarrinhoController {
             }
         }
     }
+    @RequestMapping(value="/cookie/update", method=RequestMethod.GET)
+    public void doCookieUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        HttpSession session = request.getSession();
+        String email = (String) session.getAttribute("email");
+        String cookString = request.getParameter("cookString");
+        Cookie c = new Cookie(email.replace('@','|'),cookString);
+        c.setMaxAge(3600);
+        response.addCookie(c);
+        //response.sendRedirect("/carrinho");
+    }
     
 
 
@@ -79,26 +86,25 @@ public class CarrinhoController {
     public void doUpdateEstoque(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, InterruptedException {
         int id = Integer.parseInt(request.getParameter("id"));
         String command = request.getParameter("comando");
-        var write = response.getWriter();
         HttpSession session = request.getSession();
         String email = (String) session.getAttribute("email");
         Cookie[] cookies = request.getCookies();
         if (command.equals("add")){
         //adicionar ao carrinho`
         //cookie
-            ProductDAO.updateEstoque(-1, id);
-            //criar cookie
-            boolean flag = false;
-            for (Cookie cookie : cookies) {//Verifica se cookie existe
+        //criar cookie
+        boolean flag = false;
+        String data;
+        ProductDAO.updateEstoque(-1, id);
+        for (Cookie cookie : cookies) {//Verifica se cookie existe
                 if (email.replace('@','|').equals(cookie.getName())) {
                     flag = true;
-                    String data;
                     if(cookie.getValue().equals("")){
                         data = String.valueOf(id);
                     }else{
-                        data =  cookie.getValue()+"|"+id;
+                        data =  cookie.getValue()+"-"+id;
                     }
-                   
+                    cookie.setValue(data);
                     Cookie c = new Cookie(email.replace('@','|'), data);
                     c.setMaxAge(3600-cookie.getMaxAge());
                     response.addCookie(c);
@@ -106,7 +112,8 @@ public class CarrinhoController {
                 }
             }
             if(!flag){
-                Cookie c = new Cookie(email.replace('@','|'),"");
+                data = String.valueOf(id);
+                Cookie c = new Cookie(email.replace('@','|'), data);
                 c.setMaxAge(3600);
                 response.addCookie(c);
                 response.sendRedirect("/carrinho");
@@ -118,18 +125,12 @@ public class CarrinhoController {
                 if (email.replace('@','|').equals(cookie.getName())) {
                     Carrinho carrinho = new Carrinho();
                     carrinho.cookieRemove(cookie.getValue(), id);
-                    cookString = cookie.getValue();
-                    write.println(carrinho.cookieRemove(cookie.getValue(), id));
-                    cookie.setMaxAge(0);
-                   // response.sendRedirect("/carrinho);
-                    Cookie c = new Cookie(email.replace('@','|'),cookString);
-                    c.setMaxAge(3600);
-                    response.addCookie(c);
-                    //response.sendRedirect("/carrinho");
+                    cookString = carrinho.getCookies();
+                    cookie.setValue(cookString);
+                    response.sendRedirect("/carrinho?cookString="+cookString+"o valor");
                 }
             }
             ProductDAO.updateEstoque(1, id);
         }
-        
     }
 }
