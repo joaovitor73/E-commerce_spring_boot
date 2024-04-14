@@ -76,27 +76,6 @@ public class CarrinhoController {
             }
         }
     }
-    @RequestMapping(value="/cookie/update", method=RequestMethod.GET)
-    public void doCookieUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException{
-       // int id = Integer.parseInt(request.getParameter("id"));
-        Cookie[] cookies = request.getCookies(); 
-        Carrinho carrinho = new Carrinho();
-        String cookString;
-        var write = response.getWriter();
-        for (Cookie cookie : cookies) {    
-             if("joao-gmail.com".equals(cookie.getValue())){//Usuario
-               // cookString = carrinho.cookieRemoveAll(cookie.getValue(), id);
-             //   cookie.setValue(cookString);
-               // response.addCookie(cookie);
-                write.println(cookie.getName());
-                cookie.setValue("");
-                response.addCookie(cookie);
-               
-                //response.sendRedirect("/");
-             }
-        } 
-        response.sendRedirect("/"); 
-    }
 
     @RequestMapping(value = "/carrinho/update", method=RequestMethod.GET)
     public void doUpdateEstoque(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, InterruptedException {
@@ -105,6 +84,7 @@ public class CarrinhoController {
         HttpSession session = request.getSession();
         String email = (String) session.getAttribute("email");
         Cookie[] cookies = request.getCookies();
+        var write = response.getWriter();
         if (command.equals("add")){
             //adicionar ao carrinho`
             //cookie
@@ -134,13 +114,25 @@ public class CarrinhoController {
             
         }else if (command.equals("remove")){
             String cookString;
+            String flag = request.getParameter("flag");
             for (Cookie cookie : cookies) {//Verifica se cookie existe
-                if (email.replace('@','-').equals(cookie.getName())) {
-                    Carrinho carrinho = new Carrinho();
-                    cookString = carrinho.cookieRemove(cookie.getValue(), id);
-                    cookie.setValue(cookString);
-                    response.addCookie(cookie);
-                    response.sendRedirect("/carrinho");
+                if(flag == null){
+                    if (email.replace('@','-').equals(cookie.getName())) {
+                        Carrinho carrinho = new Carrinho();
+                        cookString = carrinho.cookieRemove(cookie.getValue(), id);
+                        cookie.setValue(cookString);
+                        response.addCookie(cookie);
+                        response.sendRedirect("/carrinho");
+                    }
+                }else{
+                    if (cookie.getName().contains("-")) {
+                        write.println(cookie.getValue() + "\n");
+                        Carrinho carrinho = new Carrinho();
+                        cookString = carrinho.cookieRemoveAll(cookie.getValue(), id);
+                        cookie.setValue(cookString);
+                        response.addCookie(cookie);
+                        response.sendRedirect("/");
+                    }
                 }
             }
             // ProductDAO.updateEstoque(1, id);

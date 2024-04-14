@@ -35,8 +35,8 @@ public class ProductController {
         String id = request.getParameter("id");       
         if(ProductDAO.getProductId(Integer.parseInt(id)) != null){
             ProductDAO.deleteProduct(Integer.parseInt(id));
-            //response.sendRedirect("/cookie/update?id=" + id);
-            response.sendRedirect("/");
+            response.sendRedirect("/carrinho/update?id=" + id+"&comando=remove&flag=true");
+            //response.sendRedirect("/");
         }
     }
 }
