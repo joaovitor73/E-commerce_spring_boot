@@ -34,13 +34,14 @@ public class CarrinhoController {
                 String data = cookie.getValue();
                 if(data != "" || data == null){
                     write.println("<h1> Lista Carrinho</h1>");
-                    write.println("<table border='1'><thead><tr><th>Nome</th> <th>Descrição</th> <th>Quantidade</th><th>Preço</th> <th>Remover</th></tr></thead>");
+                    write.println("<table border='1'><thead><tr><th>Nome</th> <th>Descrição</th> <th>Quantidade</th><th>Preço</th> <th>Remover</th> <th>Adicionar</th></tr></thead>");
                     Product product;
                     for (Entry<Integer, Integer> entry : carrinho.cookieToArray(data).entrySet()) {
                         Integer id = entry.getKey();
                         int quantidade = entry.getValue();
                         product = ProductDAO.getProductId(id);
-                        write.println("<tr><td> " + product.getNome() + "</td><td> " + product.getDescricao()+  "</td><td> " + quantidade +  "</td><td> " + product.getPreco()+ "</td><td> "+ "<a href='/carrinho/update?id=" +id + "&comando=remove'" + ">Remover</a>" + "</td>");
+                        write.println("<tr><td> " + product.getNome() + "</td><td> " + product.getDescricao()+  "</td><td> " + quantidade +  "</td><td> " + product.getPreco()+ "</td><td> "+ "<a href='/carrinho/update?id=" +id + "&comando=remove'" + ">Remover</a>" + "</td><td> "+  "<a href='/carrinho/update?id=" + id +"&comando=add'" + ">Adicionar</a>" +"</td>");
+            
                     }
                     
                     write.println("</table>");
@@ -131,10 +132,11 @@ public class CarrinhoController {
                         cookString = carrinho.cookieRemoveAll(cookie.getValue(), id);
                         cookie.setValue(cookString);
                         response.addCookie(cookie);
-                        response.sendRedirect("/");
+                       
                     }
                 }
             }
+            response.sendRedirect("/");
             // ProductDAO.updateEstoque(1, id);
         }
     }

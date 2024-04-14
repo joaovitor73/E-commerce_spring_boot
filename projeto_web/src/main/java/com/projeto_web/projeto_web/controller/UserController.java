@@ -51,7 +51,7 @@ public class UserController {
             uDAO.insertClient(user);
             write.println("Usuario criado");
         }else{
-            write.println("Usuario existente");
+            write.println("<html><head><title>Erro</title></head><body><p>Esse email já existe</p></body></html>");
         }
     }
 
