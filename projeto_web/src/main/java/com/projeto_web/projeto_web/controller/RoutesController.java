@@ -14,12 +14,12 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class RoutesController {
     @RequestMapping(value = "/signIn", method= RequestMethod.GET)
-    public String signIn(){
-        return "signIn";
+    public String signIn(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        return "signIn.html";
     }
     @RequestMapping(value = "/signUp", method= RequestMethod.GET)
-    public String signUp(){
-        return "signUp";
+    public String signUp(HttpServletRequest request, HttpServletResponse response){
+        return "signUp.html";
     }
     @RequestMapping(value = "/logout", method= RequestMethod.GET)
     public void doLogout(HttpServletRequest request, HttpServletResponse response)  throws IOException, ServletException{

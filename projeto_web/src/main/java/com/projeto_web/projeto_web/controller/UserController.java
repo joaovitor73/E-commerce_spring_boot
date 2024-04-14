@@ -23,7 +23,6 @@ public class UserController {
         String password = request.getParameter("password");
         ClientDAO uDAO = new ClientDAO();
         LogisticDAO lDAO = new LogisticDAO();
-        var write = response.getWriter();
         if(uDAO.getClient(email, password) != null){//user exist
             HttpSession session = request.getSession();
             session.setAttribute("email", email);
@@ -35,7 +34,7 @@ public class UserController {
             session.setAttribute("rule", "lojista");
             response.sendRedirect("/");
         }else{
-            write.println("Login invalido");
+            response.sendRedirect("/?invalido=true");
         }
     }
 

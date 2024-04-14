@@ -1,7 +1,6 @@
 package com.projeto_web.projeto_web.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Map.Entry;
 
 import org.springframework.stereotype.Controller;
@@ -40,8 +39,13 @@ public class CarrinhoController {
                         Integer id = entry.getKey();
                         int quantidade = entry.getValue();
                         product = ProductDAO.getProductId(id);
-                        write.println("<tr><td> " + product.getNome() + "</td><td> " + product.getDescricao()+  "</td><td> " + quantidade +  "</td><td> " + product.getPreco()+ "</td><td> "+ "<a href='/carrinho/update?id=" +id + "&comando=remove'" + ">Remover</a>" + "</td><td> "+  "<a href='/carrinho/update?id=" + id +"&comando=add'" + ">Adicionar</a>" +"</td>");
-            
+                        write.println("<tr><td> " + product.getNome() + "</td><td> " + product.getDescricao()+  "</td><td> " + quantidade +  "</td><td> " + product.getPreco()+ "</td>");
+                        write.println("<td> "+ "<a href='/carrinho/update?id=" +id + "&comando=remove'" + ">Remover</a>" + "</td>");
+                        if(quantidade < product.getEstoque()){
+                            write.println("<td> "+  "<a href='/carrinho/update?id=" + id +"&comando=add'" + ">Adicionar</a>" +"</td>");
+                        }else{
+                            write.println("<td>Estoque vazio</td>");
+                        }
                     }
                     
                     write.println("</table>");
@@ -59,24 +63,36 @@ public class CarrinhoController {
     }
 
     @RequestMapping(value = "/carrinho/checkout", method=RequestMethod.GET)
-    public void doCarrinhoCheckOut(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    public void doCarrinhoCheckOut(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         HttpSession session = request.getSession();
         String email = (String) session.getAttribute("email");
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
             if (email.replace('@','-').equals(cookie.getName())) {
                 Carrinho carrinho = new Carrinho();
+                int total = 0;
                 for (Entry<Integer, Integer> entry : carrinho.cookieToArray(cookie.getValue()).entrySet()) {
                     Integer id = entry.getKey();
                     int quantidade = entry.getValue();
+                    total += (ProductDAO.getProductId(id).getPreco()*quantidade);
                     ProductDAO.updateEstoque(-quantidade, id); 
                 }
                 cookie.setValue("");
                 response.addCookie(cookie);
-                response.sendRedirect("/");
+                var write = response.getWriter();
+                write.println("<html> <head> <title> Loja </title> </head> <body>");
+                write.println("<h3> valor a ser pago: " + total + " </h3>");
+                write.println("<a href='/'> Ver produtos </a>");
+                //response.sendRedirect("/");
             }
         }
     }
+
+    @RequestMapping(value="/carrinho/total", method = RequestMethod.GET)
+    public void doTotal(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        response.getWriter().println("<h2>O valor a ser pago é: "+ request.getAttribute("total") + "</h2>");
+    }
+
 
     @RequestMapping(value = "/carrinho/update", method=RequestMethod.GET)
     public void doUpdateEstoque(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, InterruptedException {
@@ -136,7 +152,9 @@ public class CarrinhoController {
                     }
                 }
             }
-            response.sendRedirect("/");
+            if(flag != null){
+                response.sendRedirect("/"); 
+            }
             // ProductDAO.updateEstoque(1, id);
         }
     }

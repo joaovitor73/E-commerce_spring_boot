@@ -46,6 +46,10 @@ public class HomeController {
             }
             if(session.getAttribute("rule").equals("lojista")){
                 List<Product> products = ProductDAO.getProducts();
+                String erro = request.getParameter("erro");
+                if(erro != null){
+                    write.println("<h2>Id já existente, produto nao cadastrado</h2>");
+                }
                 if(products.size() == 0){
                     write.println("<h2>Não há produtos cadastrados</h2>");
                 }else{
@@ -60,11 +64,11 @@ public class HomeController {
                 }
                 write.println("<h1>Adicionar Produto</h1>");
                 write.println("<br><form action='/logistc/products/create' method='post'>");
-                write.println("ID do Produto <input type='number' name='id' value='0'> <br><br>");
-                write.println("Nome do Produto <input type='text' name='nome'> <br><br>");
-                write.println("Descrição <input type='text' name='descricao'> <br><br>");
-                write.println("Valor do Produto <input type='number' name='preco' value='0'> <br><br>");
-                write.println("Quantidade no Estoque <input type='number' name='estoque' value='0'> <br><br>");
+                write.println("ID do Produto <input type='number' name='id' required> <br><br>");
+                write.println("Nome do Produto <input type='text' name='nome' required> <br><br>");
+                write.println("Descrição <input type='text' name='descricao' required> <br><br>");
+                write.println("Valor do Produto <input type='number' name='preco' required> <br><br>");
+                write.println("Quantidade no Estoque <input type='number' name='estoque' required> <br><br>");
                 write.println("<button type='submit'> Cadastrar Produto  </button></form>");
             }
             write.println("<br><br><a href='/logout'>Sair</a>");
