@@ -43,6 +43,9 @@ public class Product {
     public int getEstoque() {
         return estoque;
     }
+    public void setEstoque(int qtd) {
+        this.estoque = qtd;
+    }
     public void incrementaEstoque() {
         this.estoque++;
     }

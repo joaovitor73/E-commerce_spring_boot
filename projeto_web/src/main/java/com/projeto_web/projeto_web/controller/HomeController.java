@@ -17,7 +17,7 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 public class HomeController {
     @RequestMapping(value = "/", method=RequestMethod.GET)
-    public void doHome (HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doHome (HttpServletRequest request, HttpServletResponse response) throws IOException { 
         HttpSession session = request.getSession(false);
         if (session != null) {
             var write = response.getWriter();

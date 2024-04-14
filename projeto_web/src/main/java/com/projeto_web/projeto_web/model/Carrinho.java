@@ -71,6 +71,19 @@ public class Carrinho {
         return cookie;
     }
 
+    public String cookieRemoveAll(String produtos, int id){
+        String idStr = String.valueOf(id);
+        String idPreceding = "-" + idStr;
+        while(produtos.contains(idStr)){
+            if (produtos.contains(idPreceding)) {
+                produtos = produtos.replaceFirst(idPreceding, "");
+            } else {
+                produtos = produtos.replaceFirst(idStr, "");
+            }
+        }
+        return produtos;
+    }
+
     public String cookieRemove(String produtos, int id){
         String idStr = String.valueOf(id);
         String idPreceding = "-" + idStr;

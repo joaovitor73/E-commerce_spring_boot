@@ -1,6 +1,7 @@
 package com.projeto_web.projeto_web.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Map.Entry;
 
 import org.springframework.stereotype.Controller;
@@ -16,40 +17,41 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @Controller
 public class CarrinhoController {
     @RequestMapping(value = "/carrinho", method=RequestMethod.GET)
-    public void doVerCarrinho(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doVerCarrinho(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         var write = response.getWriter();
-        boolean flag = false;
         write.println("<html> <head> <title> Loja </title> </head> <body>");
-        write.println("<h1> Lista Carrinho</h1>");
-        write.println("<table border='1'><thead><tr><th>Nome</th> <th>Descrição</th> <th>Quantidade</th><th>Preço</th> <th>Remover</th></tr></thead>");
         HttpSession session = request.getSession();
         String email = (String) session.getAttribute("email");
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
-            if (email.replace('@','|').equals(cookie.getName())) {
-                flag = true;
+            if (email.replace('@','-').equals(cookie.getName())) {
                 Carrinho carrinho = new Carrinho();
-                for (Entry<Integer, Integer> entry : carrinho.cookieToArray(cookie.getValue()).entrySet()) {
-                    Integer id = entry.getKey();
-                    int quantidade = entry.getValue();
-                    Product product = ProductDAO.getProductId(id);
-                    write.println("<tr><td> " + product.getNome() + "</td><td> " + product.getDescricao()+  "</td><td> " + quantidade +  "</td><td> " + product.getPreco()+ "</td><td> "+ "<a href='/carrinho/update?id=" +id + "&comando=remove'" + ">Remover</a>" + "</td>");
+                String data = cookie.getValue();
+                if(data != "" || data == null){
+                    write.println("<h1> Lista Carrinho</h1>");
+                    write.println("<table border='1'><thead><tr><th>Nome</th> <th>Descrição</th> <th>Quantidade</th><th>Preço</th> <th>Remover</th></tr></thead>");
+                    Product product;
+                    for (Entry<Integer, Integer> entry : carrinho.cookieToArray(data).entrySet()) {
+                        Integer id = entry.getKey();
+                        int quantidade = entry.getValue();
+                        product = ProductDAO.getProductId(id);
+                        write.println("<tr><td> " + product.getNome() + "</td><td> " + product.getDescricao()+  "</td><td> " + quantidade +  "</td><td> " + product.getPreco()+ "</td><td> "+ "<a href='/carrinho/update?id=" +id + "&comando=remove'" + ">Remover</a>" + "</td>");
+                    }
+                    
+                    write.println("</table>");
+                    write.println("<br><a href='/carrinho/checkout'>Finalizar Compra</a><br>");
+
+                }else{
+                    write.println("<h2>Seu carrinho está vazio</h2>");
                 }
             }
         }
-        write.println("</table>");
-        if(!flag){
-            write.println("<h2>Seu carrinho está vazio</h2>");
-        }
-        if(flag){
-            write.println("<br><a href='/carrinho/checkout'>Finalizar Compra</a><br>");
-        }
+        
         write.println("<br><a href='/'>Ver Produtos</a>");
         write.println("<br><br><a href='/logout'>Sair</a>");
         write.println("</body></html>");
@@ -61,8 +63,14 @@ public class CarrinhoController {
         String email = (String) session.getAttribute("email");
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
-            if (email.replace('@','|').equals(cookie.getName())) {
-                cookie.setMaxAge(0);
+            if (email.replace('@','-').equals(cookie.getName())) {
+                Carrinho carrinho = new Carrinho();
+                for (Entry<Integer, Integer> entry : carrinho.cookieToArray(cookie.getValue()).entrySet()) {
+                    Integer id = entry.getKey();
+                    int quantidade = entry.getValue();
+                    ProductDAO.updateEstoque(-quantidade, id); 
+                }
+                cookie.setValue("");
                 response.addCookie(cookie);
                 response.sendRedirect("/");
             }
@@ -70,17 +78,25 @@ public class CarrinhoController {
     }
     @RequestMapping(value="/cookie/update", method=RequestMethod.GET)
     public void doCookieUpdate(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        HttpSession session = request.getSession();
-        String email = (String) session.getAttribute("email");
-        String cookString = request.getParameter("cookString");
-        Cookie c = new Cookie(email.replace('@','|'),cookString);
-        c.setMaxAge(3600);
-        response.addCookie(c);
-        //response.sendRedirect("/carrinho");
+       // int id = Integer.parseInt(request.getParameter("id"));
+        Cookie[] cookies = request.getCookies(); 
+        Carrinho carrinho = new Carrinho();
+        String cookString;
+        var write = response.getWriter();
+        for (Cookie cookie : cookies) {    
+             if("joao-gmail.com".equals(cookie.getValue())){//Usuario
+               // cookString = carrinho.cookieRemoveAll(cookie.getValue(), id);
+             //   cookie.setValue(cookString);
+               // response.addCookie(cookie);
+                write.println(cookie.getName());
+                cookie.setValue("");
+                response.addCookie(cookie);
+               
+                //response.sendRedirect("/");
+             }
+        } 
+        response.sendRedirect("/"); 
     }
-    
-
-
 
     @RequestMapping(value = "/carrinho/update", method=RequestMethod.GET)
     public void doUpdateEstoque(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException, InterruptedException {
@@ -90,14 +106,13 @@ public class CarrinhoController {
         String email = (String) session.getAttribute("email");
         Cookie[] cookies = request.getCookies();
         if (command.equals("add")){
-        //adicionar ao carrinho`
-        //cookie
-        //criar cookie
-        boolean flag = false;
-        String data;
-        ProductDAO.updateEstoque(-1, id);
-        for (Cookie cookie : cookies) {//Verifica se cookie existe
-                if (email.replace('@','|').equals(cookie.getName())) {
+            //adicionar ao carrinho`
+            //cookie
+            //criar cookie
+            boolean flag = false;
+            String data;
+            for (Cookie cookie : cookies) {//Verifica se cookie existe
+                if (email.replace('@','-').equals(cookie.getName())) {
                     flag = true;
                     if(cookie.getValue().equals("")){
                         data = String.valueOf(id);
@@ -105,15 +120,13 @@ public class CarrinhoController {
                         data =  cookie.getValue()+"-"+id;
                     }
                     cookie.setValue(data);
-                    Cookie c = new Cookie(email.replace('@','|'), data);
-                    c.setMaxAge(3600-cookie.getMaxAge());
-                    response.addCookie(c);
+                    response.addCookie(cookie);
                     response.sendRedirect("/carrinho");
                 }
             }
             if(!flag){
                 data = String.valueOf(id);
-                Cookie c = new Cookie(email.replace('@','|'), data);
+                Cookie c = new Cookie(email.replace('@','-'), data);
                 c.setMaxAge(3600);
                 response.addCookie(c);
                 response.sendRedirect("/carrinho");
@@ -122,7 +135,7 @@ public class CarrinhoController {
         }else if (command.equals("remove")){
             String cookString;
             for (Cookie cookie : cookies) {//Verifica se cookie existe
-                if (email.replace('@','|').equals(cookie.getName())) {
+                if (email.replace('@','-').equals(cookie.getName())) {
                     Carrinho carrinho = new Carrinho();
                     cookString = carrinho.cookieRemove(cookie.getValue(), id);
                     cookie.setValue(cookString);
@@ -130,7 +143,7 @@ public class CarrinhoController {
                     response.sendRedirect("/carrinho");
                 }
             }
-            ProductDAO.updateEstoque(1, id);
+            // ProductDAO.updateEstoque(1, id);
         }
     }
 }
