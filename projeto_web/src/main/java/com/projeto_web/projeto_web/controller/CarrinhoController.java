@@ -124,7 +124,7 @@ public class CarrinhoController {
             if(!flag){
                 data = String.valueOf(id);
                 Cookie c = new Cookie(email.replace('@','-'), data);
-                c.setMaxAge(3600);
+                c.setMaxAge((3600*48)); //cria um cookie com 48 horas de duração
                 response.addCookie(c);
                 response.sendRedirect("/carrinho");
             }
