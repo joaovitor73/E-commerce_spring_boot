@@ -19,13 +19,12 @@ public class AuthRoutes implements Filter {
        
         HttpServletResponse response = ((HttpServletResponse) servletResponse);
         HttpServletRequest request = ((HttpServletRequest) servletRequest);
- 
+
         String requestURI = request.getRequestURI();
         if (requestURI.equals("/signIn") || requestURI.equals("/signUp") || requestURI.startsWith("/user/validate" )) {
             filterChain.doFilter(servletRequest, servletResponse);
             return;
         }
-
         HttpSession session = request.getSession(false);    
         if (session == null){
             response.sendRedirect("/signIn");
