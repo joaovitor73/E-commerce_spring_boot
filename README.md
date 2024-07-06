@@ -19,6 +19,7 @@ Visualização de produtos para administradores
    docker-compose up
 </pre>
 
+## Comandos no docker
 <pre>
    psql -h localhost -U postgres - abre o banco
   \l - mostra os bancos
