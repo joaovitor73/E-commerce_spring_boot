@@ -14,6 +14,10 @@ Este é um projeto de uma aplicação web de comércio online desenvolvida utili
 - Visualização de produtos para administradores
 Visualização de produtos para administradores
 
+## Rodar o projeto
+<pre>
+   docker-compose up
+</pre>
 
 <pre>
    psql -h localhost -U postgres - abre o banco
